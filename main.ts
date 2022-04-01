@@ -1,11 +1,12 @@
 input.onButtonPressed(Button.A, function () {
-    message = "" + message + "0"
+    letter = "" + letter + "0"
     music.playTone(523, music.beat(BeatFraction.Half))
 })
 input.onButtonPressed(Button.AB, function () {
-    radio.sendString("" + (translateMorse(message)))
-    message = ""
     music.playMelody("F C5 - - - - - - ", 1000)
+    message = "" + message + translateMorse(letter)
+    basic.showString("" + (letter))
+    letter = ""
 })
 radio.onReceivedString(function (receivedString) {
     basic.showString(receivedString)
@@ -13,13 +14,19 @@ radio.onReceivedString(function (receivedString) {
     basic.clearScreen()
 })
 input.onButtonPressed(Button.B, function () {
-    message = "" + message + "1"
+    letter = "" + letter + "1"
     music.playTone(523, music.beat(BeatFraction.Whole))
 })
+input.onGesture(Gesture.Shake, function () {
+    radio.sendString("" + (message))
+    message = ""
+    music.playMelody("F C5 - C5 - - - - ", 1000)
+})
 function translateMorse (code: string) {
-    message = chars_lookup[morse_lookup.indexOf(message)]
-    return message
+    letter = chars_lookup[morse_lookup.indexOf(letter)]
+    return letter
 }
+let letter = ""
 let message = ""
 let chars_lookup: string[] = []
 let morse_lookup: string[] = []
