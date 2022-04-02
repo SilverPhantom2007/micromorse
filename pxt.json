@@ -1,5 +1,5 @@
 {
-    "name": "telephone",
+    "name": "micromessaging",
     "description": "",
     "dependencies": {
         "core": "*",
