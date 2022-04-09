@@ -3,15 +3,13 @@ input.onButtonPressed(Button.A, function () {
     music.playTone(523, music.beat(BeatFraction.Half))
 })
 input.onButtonPressed(Button.AB, function () {
-    music.playMelody("F C5 - - - - - - ", 1000)
     message = "" + message + translateMorse(letter)
     basic.showString("" + (letter))
     letter = ""
+    music.playMelody("F C5 - - - - - - ", 1000)
 })
 radio.onReceivedString(function (receivedString) {
-    basic.showString(receivedString)
-    basic.pause(1000)
-    basic.clearScreen()
+    new_messages.unshift(receivedString)
 })
 input.onButtonPressed(Button.B, function () {
     letter = "" + letter + "1"
@@ -21,6 +19,7 @@ input.onGesture(Gesture.Shake, function () {
     radio.sendString("" + (message))
     message = ""
     music.playMelody("F C5 - C5 - - - - ", 1000)
+    basic.clearScreen()
 })
 function translateMorse (code: string) {
     letter = chars_lookup[morse_lookup.indexOf(letter)]
@@ -28,6 +27,7 @@ function translateMorse (code: string) {
 }
 let letter = ""
 let message = ""
+let new_messages: string[] = []
 let chars_lookup: string[] = []
 let morse_lookup: string[] = []
 morse_lookup = [
@@ -106,9 +106,13 @@ chars_lookup = [
 "8",
 "9"
 ]
+new_messages = []
 radio.setGroup(1)
 radio.setFrequencyBand(0)
+radio.setTransmitPower(7)
 message = ""
 basic.forever(function () {
-	
+    if (!(new_messages[0].isEmpty())) {
+        basic.showString("New messages! Want to see the oldest?")
+    }
 })
