@@ -1,32 +1,11 @@
-input.onButtonPressed(Button.A, function () {
-    letter = "" + letter + "0"
-    music.playTone(523, music.beat(BeatFraction.Half))
-})
-input.onButtonPressed(Button.AB, function () {
-    message = "" + message + translateMorse(letter)
-    basic.showString("" + (letter))
-    letter = ""
-    music.playMelody("F C5 - - - - - - ", 1000)
-})
 radio.onReceivedString(function (receivedString) {
     new_messages.unshift(receivedString)
-})
-input.onButtonPressed(Button.B, function () {
-    letter = "" + letter + "1"
-    music.playTone(523, music.beat(BeatFraction.Whole))
-})
-input.onGesture(Gesture.Shake, function () {
-    radio.sendString("" + (message))
-    message = ""
-    music.playMelody("F C5 - C5 - - - - ", 1000)
-    basic.clearScreen()
 })
 function translateMorse (code: string) {
     letter = chars_lookup[morse_lookup.indexOf(letter)]
     return letter
 }
 let letter = ""
-let message = ""
 let new_messages: string[] = []
 let chars_lookup: string[] = []
 let morse_lookup: string[] = []
@@ -110,9 +89,34 @@ new_messages = []
 radio.setGroup(1)
 radio.setFrequencyBand(0)
 radio.setTransmitPower(7)
-message = ""
+let message = ""
+basic.showString("Hello! Welcome to MicroMorse, a Morse Code messaging system!")
 basic.forever(function () {
+    if (input.buttonIsPressed(Button.AB)) {
+        message = "" + message + translateMorse(letter)
+        basic.showString("" + (letter))
+        letter = ""
+        music.playMelody("F C5 - - - - - - ", 1000)
+    }
+    if (input.buttonIsPressed(Button.A)) {
+        letter = "" + letter + "0"
+        music.playTone(523, music.beat(BeatFraction.Half))
+    }
+    if (input.buttonIsPressed(Button.B)) {
+        letter = "" + letter + "1"
+        music.playTone(523, music.beat(BeatFraction.Whole))
+    }
+    if (input.isGesture(Gesture.Shake)) {
+        radio.sendString("" + (message))
+        message = ""
+        music.playMelody("F C5 - C5 - - - - ", 1000)
+        basic.clearScreen()
+    }
     if (!(new_messages[0].isEmpty())) {
         basic.showString("New messages! Want to see the oldest?")
+        while (!(input.buttonIsPressed(Button.A))) {
+        	
+        }
+        basic.showString("" + (new_messages.pop()))
     }
 })
