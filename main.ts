@@ -1,11 +1,56 @@
+input.onButtonPressed(Button.A, function () {
+    if (game_state == "write") {
+        letter = "" + letter + "0"
+        music.playTone(523, music.beat(BeatFraction.Half))
+    } else {
+    	
+    }
+})
+input.onButtonPressed(Button.AB, function () {
+    if (game_state == "default") {
+        game_state = "read"
+    } else if (game_state == "write") {
+        message = "" + message + translateMorse(letter)
+        basic.showString("" + (letter))
+        letter = ""
+        music.playMelody("F C5 - - - - - - ", 500)
+    } else {
+    	
+    }
+})
 radio.onReceivedString(function (receivedString) {
     new_messages.unshift(receivedString)
+})
+input.onButtonPressed(Button.B, function () {
+    if (game_state == "read") {
+        game_state = "default"
+    } else if (game_state == "write") {
+        letter = "" + letter + "1"
+        music.playTone(523, music.beat(BeatFraction.Whole))
+    } else {
+    	
+    }
+})
+input.onGesture(Gesture.Shake, function () {
+    if (game_state == "default") {
+        game_state = "write"
+    } else if (game_state == "write") {
+        radio.sendString("" + (message))
+        message = ""
+        music.playMelody("F C5 - C5 - - - - ", 500)
+        basic.clearScreen()
+        game_state = "default"
+    } else {
+    	
+    }
 })
 function translateMorse (code: string) {
     letter = chars_lookup[morse_lookup.indexOf(letter)]
     return letter
 }
 let letter = ""
+let game_state = ""
+let message = ""
 let new_messages: string[] = []
 let chars_lookup: string[] = []
 let morse_lookup: string[] = []
@@ -89,34 +134,78 @@ new_messages = []
 radio.setGroup(1)
 radio.setFrequencyBand(0)
 radio.setTransmitPower(7)
-let message = ""
-basic.showString("Hello! Welcome to MicroMorse, a Morse Code messaging system!")
+message = ""
+basic.showLeds(`
+    . . . . .
+    . . . . .
+    . . # . .
+    . . . . .
+    . . . . .
+    `)
+basic.showLeds(`
+    . . . . .
+    . # # # .
+    . # . # .
+    . # # # .
+    . . . . .
+    `)
+basic.showLeds(`
+    # # # # #
+    # . . . #
+    # . . . #
+    # . . . #
+    # # # # #
+    `)
+basic.showLeds(`
+    # # # # #
+    # # # # #
+    # # . # #
+    # # # # #
+    # # # # #
+    `)
+basic.showLeds(`
+    # # # # #
+    # # # # #
+    # # # # #
+    # # # # #
+    # # # # #
+    `)
+basic.showLeds(`
+    . . . . .
+    . # # # .
+    . # # # .
+    . # # # .
+    . . . . .
+    `)
+basic.showLeds(`
+    . . . . .
+    . . . . .
+    . . # . .
+    . . . . .
+    . . . . .
+    `)
+basic.clearScreen()
+basic.showString("Ready!")
+game_state = "default"
 basic.forever(function () {
-    if (input.buttonIsPressed(Button.AB)) {
-        message = "" + message + translateMorse(letter)
-        basic.showString("" + (letter))
-        letter = ""
-        music.playMelody("F C5 - - - - - - ", 1000)
-    }
-    if (input.buttonIsPressed(Button.A)) {
-        letter = "" + letter + "0"
-        music.playTone(523, music.beat(BeatFraction.Half))
-    }
-    if (input.buttonIsPressed(Button.B)) {
-        letter = "" + letter + "1"
-        music.playTone(523, music.beat(BeatFraction.Whole))
-    }
-    if (input.isGesture(Gesture.Shake)) {
-        radio.sendString("" + (message))
-        message = ""
-        music.playMelody("F C5 - C5 - - - - ", 1000)
-        basic.clearScreen()
-    }
-    if (!(new_messages[0].isEmpty())) {
-        basic.showString("New messages! Want to see the oldest?")
-        while (!(input.buttonIsPressed(Button.A))) {
-        	
+    if (game_state == "read") {
+        if (!(new_messages[0].isEmpty())) {
+            basic.showString("new msg! want 2 see oldest?")
+            while (!(input.buttonIsPressed(Button.A) || input.buttonIsPressed(Button.B))) {
+            	
+            }
+            if (input.buttonIsPressed(Button.A)) {
+                basic.showString("msg: " + new_messages.pop())
+                basic.pause(3000)
+                basic.clearScreen()
+            } else {
+            	
+            }
+        } else {
+            basic.showString("No new msgs.")
+            game_state = "default"
         }
-        basic.showString("" + (new_messages.pop()))
+    } else {
+    	
     }
 })
