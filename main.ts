@@ -1,53 +1,52 @@
 input.onButtonPressed(Button.A, function () {
     if (game_state == "write") {
-        letter = "" + letter + "0"
+        letter = letter + "0"
         music.playTone(523, music.beat(BeatFraction.Half))
-    } else {
-    	
     }
 })
 input.onButtonPressed(Button.AB, function () {
     if (game_state == "default") {
+        basic.clearScreen()
+        basic.showString("Read Mode", 100)
         game_state = "read"
     } else if (game_state == "write") {
-        message = "" + message + translateMorse(letter)
-        basic.showString("" + (letter))
+        message = message + translateMorse(letter)
+        basic.showString(letter, 100)
         letter = ""
         music.playMelody("F C5 - - - - - - ", 500)
-    } else {
-    	
     }
 })
 radio.onReceivedString(function (receivedString) {
     new_messages.unshift(receivedString)
 })
 input.onButtonPressed(Button.B, function () {
-    if (game_state == "read") {
-        game_state = "default"
-    } else if (game_state == "write") {
-        letter = "" + letter + "1"
+    if (game_state == "write") {
+        letter = letter + "1"
         music.playTone(523, music.beat(BeatFraction.Whole))
-    } else {
-    	
     }
 })
 input.onGesture(Gesture.Shake, function () {
     if (game_state == "default") {
+        basic.clearScreen()
+        basic.showString("Write Mode", 100)
         game_state = "write"
     } else if (game_state == "write") {
-        radio.sendString("" + (message))
+        radio.sendString(message)
         message = ""
         music.playMelody("F C5 - C5 - - - - ", 500)
         basic.clearScreen()
-        game_state = "default"
-    } else {
-    	
     }
 })
 function translateMorse (code: string) {
     letter = chars_lookup[morse_lookup.indexOf(letter)]
     return letter
 }
+input.onLogoEvent(TouchButtonEvent.Touched, function () {
+    message = ""
+    letter = ""
+    basic.clearScreen()
+    game_state = "default"
+})
 let letter = ""
 let game_state = ""
 let message = ""
@@ -185,27 +184,27 @@ basic.showLeds(`
     . . . . .
     `)
 basic.clearScreen()
-basic.showString("Ready!")
+basic.showString("Ready!", 100)
 game_state = "default"
 basic.forever(function () {
     if (game_state == "read") {
         if (!(new_messages[0].isEmpty())) {
-            basic.showString("new msg! want 2 see oldest?")
-            while (!(input.buttonIsPressed(Button.A) || input.buttonIsPressed(Button.B))) {
+            basic.showString("New msg! Want 2 c oldest?")
+            while (!(input.buttonIsPressed(Button.A) || TouchButtonEvent.Touched)) {
             	
             }
             if (input.buttonIsPressed(Button.A)) {
-                basic.showString("msg: " + new_messages.pop())
+                basic.showString("msg: " + new_messages.pop(), 100)
                 basic.pause(3000)
                 basic.clearScreen()
             } else {
             	
             }
         } else {
-            basic.showString("No new msgs.")
+            basic.showString("No new msgs", 100)
             game_state = "default"
         }
-    } else {
-    	
+    } else if (game_state == "default") {
+        basic.showString("Default Mode", 100)
     }
 })
