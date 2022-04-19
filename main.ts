@@ -7,6 +7,7 @@ input.onButtonPressed(Button.A, function () {
 input.onButtonPressed(Button.AB, function () {
     if (game_state == "default") {
         basic.clearScreen()
+        music.playMelody("C D E F G A B C5 ", 500)
         game_state = "read"
     } else if (game_state == "write") {
         message = "" + message + translateMorse(letter)
@@ -27,6 +28,7 @@ input.onButtonPressed(Button.B, function () {
 input.onGesture(Gesture.Shake, function () {
     if (game_state == "default") {
         basic.clearScreen()
+        music.playMelody("C5 F - - - - - - ", 500)
         game_state = "write"
     } else if (game_state == "write") {
         if (true) {
@@ -47,6 +49,7 @@ function translateMorse (code: string) {
 input.onLogoEvent(TouchButtonEvent.Pressed, function () {
     letter = ""
     message = ""
+    music.playMelody("C5 F - - - - - - ", 500)
     game_state = "default"
     basic.clearScreen()
 })
@@ -192,7 +195,7 @@ game_state = "default"
 basic.forever(function () {
     if (game_state == "read") {
         if (!(new_messages[0].isEmpty())) {
-            basic.showString("New msg! Want 2 c oldest?", 100)
+            basic.showString("New msg! Want 2 c?", 100)
 while (!(input.buttonIsPressed(Button.A) || input.buttonIsPressed(Button.B))) {
             	
             }
@@ -204,6 +207,7 @@ basic.pause(3000)
             	
             }
         } else {
+            music.playMelody("C5 F - - - - - - ", 500)
             basic.showString("No new msgs", 100)
 game_state = "default"
         }
