@@ -1,18 +1,17 @@
 input.onButtonPressed(Button.A, function () {
     if (game_state == "write") {
-        letter = letter + "0"
+        letter = "" + letter + "0"
         music.playTone(523, music.beat(BeatFraction.Half))
     }
 })
 input.onButtonPressed(Button.AB, function () {
     if (game_state == "default") {
         basic.clearScreen()
-        basic.showString("Read Mode", 100)
         game_state = "read"
     } else if (game_state == "write") {
-        message = message + translateMorse(letter)
+        message = "" + message + translateMorse(letter)
         basic.showString(letter, 100)
-        letter = ""
+letter = ""
         music.playMelody("F C5 - - - - - - ", 500)
     }
 })
@@ -21,17 +20,21 @@ radio.onReceivedString(function (receivedString) {
 })
 input.onButtonPressed(Button.B, function () {
     if (game_state == "write") {
-        letter = letter + "1"
+        letter = "" + letter + "1"
         music.playTone(523, music.beat(BeatFraction.Whole))
     }
 })
 input.onGesture(Gesture.Shake, function () {
     if (game_state == "default") {
         basic.clearScreen()
-        basic.showString("Write Mode", 100)
         game_state = "write"
     } else if (game_state == "write") {
-        radio.sendString(message)
+        if (true) {
+        	
+        } else {
+        	
+        }
+        radio.sendString("" + (message))
         message = ""
         music.playMelody("F C5 - C5 - - - - ", 500)
         basic.clearScreen()
@@ -41,18 +44,18 @@ function translateMorse (code: string) {
     letter = chars_lookup[morse_lookup.indexOf(letter)]
     return letter
 }
-input.onLogoEvent(TouchButtonEvent.Touched, function () {
-    message = ""
+input.onLogoEvent(TouchButtonEvent.Pressed, function () {
     letter = ""
-    basic.clearScreen()
+    message = ""
     game_state = "default"
+    basic.clearScreen()
 })
-let letter = ""
 let game_state = ""
 let message = ""
-let new_messages: string[] = []
 let chars_lookup: string[] = []
 let morse_lookup: string[] = []
+let letter = ""
+let new_messages: string[] = []
 morse_lookup = [
 "01",
 "1000",
@@ -189,22 +192,20 @@ game_state = "default"
 basic.forever(function () {
     if (game_state == "read") {
         if (!(new_messages[0].isEmpty())) {
-            basic.showString("New msg! Want 2 c oldest?")
-            while (!(input.buttonIsPressed(Button.A) || TouchButtonEvent.Touched)) {
+            basic.showString("New msg! Want 2 c oldest?", 100)
+while (!(input.buttonIsPressed(Button.A) || input.buttonIsPressed(Button.B))) {
             	
             }
             if (input.buttonIsPressed(Button.A)) {
                 basic.showString("msg: " + new_messages.pop(), 100)
-                basic.pause(3000)
+basic.pause(3000)
                 basic.clearScreen()
             } else {
             	
             }
         } else {
             basic.showString("No new msgs", 100)
-            game_state = "default"
+game_state = "default"
         }
-    } else if (game_state == "default") {
-        basic.showString("Default Mode", 100)
     }
 })
